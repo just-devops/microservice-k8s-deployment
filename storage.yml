@@ -1,0 +1,33 @@
+# what do we want?
+# What are we looking for to fulfill our
+# requirements for our mongo container
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+
+spec:
+  storageClassName: mylocalstorage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+# how do we want it implemented? aws, azure? etc ect
+# explaining the physical storage we want
+# to have in our kubernetes cluster.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-storage
+
+spec:
+  storageClassName: mylocalstorage
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/some/dir/structure/

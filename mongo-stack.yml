@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template: # template of a pod
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: fleetman-mongodb
+          image: mongo:3.6.21-xenial
+          volumeMounts:
+            - name: mongo-persistent-storage
+              mountPath: /data/db
+      volumes:
+        - name: mongo-persistent-storage # needs to be the same name as the volumeMounts name
+          persistentVolumeClaim:
+            claimName: mongo-pvc #folder on the virtual machine where kubernetes runs. Basically a linux vm
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-mongodb # these names are used to communicate instead of ips
+
+spec:
+  selector:
+    app: mongodb
+
+  ports:
+    - name: mongoport
+      port: 27017
+
+  type: ClusterIP
